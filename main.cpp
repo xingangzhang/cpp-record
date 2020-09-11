@@ -1,6 +1,6 @@
 #include <iostream>
 
 int main() {
-    std::cout << "main方法调用" << std::endl;
+    std::cout << "main鏂规硶璋冪敤" << std::endl;
     return 0;
 }

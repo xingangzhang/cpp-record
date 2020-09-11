@@ -1,4 +1,4 @@
-// ·ÇunixÏµÍ³
+// éunixç³»ç»Ÿ
 #if defined(_MSC_VER) || defined(__MINGW32__) || defined(WIN32)
 
 #include <ws2tcpip.h>
@@ -9,17 +9,17 @@
 class WinSockInit {
     WSADATA _wsa;
 public:
-    WinSockInit() { // ·ÖÅäÌ×½Ó×Ö°æ±¾ĞÅÏ¢2.0 WSA±äÁ¿µØÖ·
+    WinSockInit() { // åˆ†é…å¥—æ¥å­—ç‰ˆæœ¬ä¿¡æ¯2.0 WSAå˜é‡åœ°å€
         WSAStartup(MAKEWORD(2, 0), &_wsa);
 
     }
 
     ~WinSockInit() {
-        WSACleanup(); // ÖÕÖ¹ws2_32.dll
+        WSACleanup(); // ç»ˆæ­¢ws2_32.dll
     }
 };
 
-// UnixÏµÍ³
+// Unixç³»ç»Ÿ
 #else
 #include <unistd.h>
 #include <sys/types.h>
@@ -33,15 +33,15 @@ public:
 
 using namespace std;
 
-// ´¦ÀíURL
+// å¤„ç†URL
 void router(int clientSock, string const &url) {
     string hint;
-    cout << url << " ÊÕµ½ĞÅÏ¢\n";
+    cout << url << " æ”¶åˆ°ä¿¡æ¯\n";
     if (url == "/") {
-        hint = "<h1 style=\"text-align: center;\">Ö÷Ò³</h1>";
+        hint = "<h1 style=\"text-align: center;\">ä¸»é¡µ</h1>";
         send(clientSock, hint.c_str(), hint.length(), 0);
     } else if (url == "/test") {
-        hint = "²âÊÔ½Ó¿Ú";
+        hint = "æµ‹è¯•æ¥å£";
         send(clientSock, hint.c_str(), hint.length(), 0);
     } else {
         hint = "404";
@@ -51,50 +51,50 @@ void router(int clientSock, string const &url) {
 
 int main() {
 #if defined(_MSC_VER) || defined(__MINGW32__) || defined(WIN32)
-    WinSockInit sockInit; // ÎªwindowsÏµÍ³ ½øĞĞWSAStartup
+    WinSockInit sockInit; // ä¸ºwindowsç³»ç»Ÿ è¿›è¡ŒWSAStartup
 #endif
 
-    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); // ½¨Á¢Ì×½Ó×Ö Ê§°Ü·µ»Ø-1
+    int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); // å»ºç«‹å¥—æ¥å­— å¤±è´¥è¿”å›-1
     sockaddr_in addr = {0};
-    addr.sin_family = AF_INET; // Ö¸¶¨µØÖ·×å
-    addr.sin_addr.s_addr = INADDR_ANY; // ip³õÊ¼»¯
-    addr.sin_port = htons(8080); // ¶Ë¿ÚºÅ³õÊ¼»¯
+    addr.sin_family = AF_INET; // æŒ‡å®šåœ°å€æ—
+    addr.sin_addr.s_addr = INADDR_ANY; // ipåˆå§‹åŒ–
+    addr.sin_port = htons(8080); // ç«¯å£å·åˆå§‹åŒ–
 
-    bind(sock, (sockaddr *) &addr, sizeof(addr)); // ·ÖÅäipºÍ¶Ë¿Ú
+    bind(sock, (sockaddr *) &addr, sizeof(addr)); // åˆ†é…ipå’Œç«¯å£
 
-    listen(sock, 0); // ÉèÖÃ¼àÌı
+    listen(sock, 0); // è®¾ç½®ç›‘å¬
 
-    // ÉèÖÃ¿Í»§¶Ë
+    // è®¾ç½®å®¢æˆ·ç«¯
     sockaddr_in clientAddr;
     int clientAddrSize = sizeof(clientAddr);
     int clientSock;
-    // ½ÓÊÜ¿Í»§¶ËÇëÇó
+    // æ¥å—å®¢æˆ·ç«¯è¯·æ±‚
     while (-1 != (clientSock = accept(sock, (sockaddr *) &clientAddr, (socklen_t *) &clientAddrSize))) {
-        // ÊÕÇëÇó
+        // æ”¶è¯·æ±‚
         string requestStr;
         int bufSize = 4096;
         requestStr.resize(bufSize);
-        // ½ÓÊÜÊı¾İ
+        // æ¥å—æ•°æ®
         recv(clientSock, &requestStr[0], bufSize, 0);
 
-        // È¡µÃµÚÒ»ĞĞ
+        // å–å¾—ç¬¬ä¸€è¡Œ
         string firstLine = requestStr.substr(0, requestStr.find("\r\n"));
-        // »ñÈ¡url substr ¸´ÖÆº¯Êı ²ÎÊıÎªÆğÊ¼Î»ÖÃ(Ä¬ÈÏ0) ¸´ÖÆµÄ×Ö·ûÊıÄ¿
+        // è·å–url substr å¤åˆ¶å‡½æ•° å‚æ•°ä¸ºèµ·å§‹ä½ç½®(é»˜è®¤0) å¤åˆ¶çš„å­—ç¬¦æ•°ç›®
         firstLine = firstLine.substr(firstLine.find(" ") + 1);
-        // find·µ»ØÕÒµ½µÄµÚÒ»¸öÆ¥Åä×Ö·û´®µÄÎ»ÖÃ ¶ø²»¹ÜÆäºóÊÇ·ñ»¹ÓĞÏàÆ¥ÅäµÄ×Ö·û´®¡£
+        // findè¿”å›æ‰¾åˆ°çš„ç¬¬ä¸€ä¸ªåŒ¹é…å­—ç¬¦ä¸²çš„ä½ç½® è€Œä¸ç®¡å…¶åæ˜¯å¦è¿˜æœ‰ç›¸åŒ¹é…çš„å­—ç¬¦ä¸²ã€‚
         string url = firstLine.substr(0, firstLine.find(" "));
 
-        // ·¢ËÍÏìÓ¦Í·
+        // å‘é€å“åº”å¤´
         string response =
                 "HTTP/1.1 200 OK\r\n"
                 "Content-Type: text/html; charset=gbk\r\n"
                 "Connection: close\r\n"
                 "\r\n";
         send(clientSock, response.c_str(), response.length(), 0);
-        // ´¦Àíurl
+        // å¤„ç†url
         router(clientSock, url);
-        close(clientSock); // ¹Ø±Õ¿Í»§¶ËÌ×½Ó×Ö
+        close(clientSock); // å…³é—­å®¢æˆ·ç«¯å¥—æ¥å­—
     }
-    close(sock); // ¹Ø±Õ·şÎñÆ÷Ì×½Ó×Ö
+    close(sock); // å…³é—­æœåŠ¡å™¨å¥—æ¥å­—
     return 0;
 }
