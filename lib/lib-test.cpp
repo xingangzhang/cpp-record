@@ -1,8 +1,9 @@
+#include <iostream>
 #include "test-lib.h"
 
-#include <cstdlib>
+using namespace std;
 
 int main() {
-    test_lib("lilei");
+    cout << test_add(1, 2) << endl;
     return EXIT_SUCCESS;
 }
